@@ -1,0 +1,25 @@
+# Docker
+postgres_data/
+docker-compose.override.yml
+
+# Node.js (put here if u r using the automated benchmarking script)
+node_modules/
+package-lock.json
+npm-debug.log
+
+# Environment
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Temporary files
+*.log
+*.tmp
