@@ -1,0 +1,38 @@
+const express = require("express");
+const router = express.Router();
+const { pool } = require("./database/pool");
+router.get("/", async (req, res) => {
+  try {
+    const result = await pool.query(`SELECT * FROM jobs`);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+router.post("/", async (req, res) => {
+  try {
+    const { user_id, payload } = req.body;
+    const result = await pool.query(
+      `INSERT INTO jobs(user_id, payload) VALUES($1, $2) RETURNING *`,
+      [user_id, payload],
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    next(error);
+  }
+});
+router.get("/:id", async (req, res) => {
+  try {
+    const result = await pool.query(`SELECT * FROM jobs WHERE id=$1`, [
+      req.params.id,
+    ]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    next(error);
+  }
+});
+
+module.exports = router;
