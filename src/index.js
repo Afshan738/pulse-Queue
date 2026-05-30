@@ -1,7 +1,7 @@
 require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const app = express();
-const errorHandler = require("./middleware/errorHandler");
+const { errorHandler } = require("./middleware/errorHandler");
 app.use(express.json());
 
 app.get("/", async (req, res) => {

@@ -1,10 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { pool } = require("./database/pool");
+const { pool } = require("../database/pool");
 const crypto = require("crypto");
-const api_key = crypto.randomBytes(32).toString("hex");
-router.post("/register", async (req, res) => {
+const {
+  validateUserInput,
+  validateIdParam,
+} = require("../middleware/inputValidation");
+
+router.post("/register", validateUserInput, async (req, res) => {
   try {
+    const api_key = crypto.randomBytes(32).toString("hex");
     const result = await pool.query(
       `INSERT INTO users(api_key,user_name) VALUES($1,$2) RETURNING *`,
       [api_key, req.body.user_name],
@@ -17,7 +22,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", validateIdParam, async (req, res) => {
   try {
     const result = await pool.query(
       `DELETE FROM users WHERE id = $1 RETURNING *`,

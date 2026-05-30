@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { pool } = require("./database/pool");
+const { pool } = require("../database/pool");
+const {
+  validateJobInput,
+  validateIdParam,
+} = require("../middleware/inputValidation");
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(`SELECT * FROM jobs`);
@@ -9,7 +13,7 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-router.post("/", async (req, res) => {
+router.post("/", validateJobInput, async (req, res) => {
   try {
     const { user_id, payload } = req.body;
     const result = await pool.query(
@@ -21,7 +25,7 @@ router.post("/", async (req, res) => {
     next(error);
   }
 });
-router.get("/:id", async (req, res) => {
+router.get("/:id", validateIdParam, async (req, res) => {
   try {
     const result = await pool.query(`SELECT * FROM jobs WHERE id=$1`, [
       req.params.id,
