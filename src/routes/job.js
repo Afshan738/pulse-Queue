@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { pool } = require("../database/pool");
+const idempotencyMiddleware = require("../middleware/idempotency");
 const {
   validateJobInput,
   validateIdParam,
@@ -10,10 +11,10 @@ router.get("/", async (req, res) => {
     const result = await pool.query(`SELECT * FROM jobs`);
     res.status(200).json(result.rows);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 });
-router.post("/", validateJobInput, async (req, res) => {
+router.post("/", idempotencyMiddleware, validateJobInput, async (req, res) => {
   try {
     const { user_id, payload } = req.body;
     const result = await pool.query(
