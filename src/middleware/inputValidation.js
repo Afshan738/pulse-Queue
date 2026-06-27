@@ -2,11 +2,7 @@ const { z } = require("zod");
 const { createError } = require("./errorHandler");
 //user validation schema
 const userSchema = z.object({
-  api_key: z
-    .string()
-    .length(44)
-    .regex(/^[a-f0-9]+$/),
-  user_name: z.string(),
+  user_name: z.string().min(1, "Username is required"),
 });
 
 //job validation schema

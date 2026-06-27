@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { pool } = require("../database/pool");
 const idempotencyMiddleware = require("../middleware/idempotency");
-
 const decodecursor = async (cursor) => {
   const decode = Buffer.from(cursor, "base64").toString("utf-8");
   const { id, created_at } = JSON.parse(decode);

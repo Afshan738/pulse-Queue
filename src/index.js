@@ -4,6 +4,7 @@ const express = require("express");
 const app = express();
 const { client } = require("./database/redisClient");
 const { errorHandler } = require("./middleware/errorHandler");
+const api_key_verification_middleWare = require("./middleware/apiKeyAuth");
 app.use(express.json());
 
 app.get("/", async (req, res) => {
@@ -12,7 +13,8 @@ app.get("/", async (req, res) => {
   console.log("pulse queue server is working successfully");
 });
 app.use("/api/users", require("./routes/user"));
-app.use("/api/jobs", require("./routes/job"));
+app.use("/api/jobs", api_key_verification_middleWare, require("./routes/job"));
+
 app.use(errorHandler);
 const startServer = async () => {
   await client.connect();
