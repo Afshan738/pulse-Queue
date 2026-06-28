@@ -18,6 +18,8 @@ app.use("/api/jobs", api_key_verification_middleWare, require("./routes/job"));
 app.use(errorHandler);
 const startServer = async () => {
   await client.connect();
+  require("./database/scheduler");
+  console.log("Scheduler started");
   app.listen(process.env.PORT || 8000, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
   });

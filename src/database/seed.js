@@ -1,8 +1,8 @@
-const crypto = require("crypto");
+import crypto from "crypto";
 const user_name = "test_user";
 
 const api_key = crypto.randomBytes(32).toString("hex");
-const { pool } = require("./pool");
+import { pool } from "./pool.js";
 
 const seed_user = async () => {
   try {
@@ -18,7 +18,7 @@ const seed_user = async () => {
 };
 seed_user();
 const jobdata = {
-  urls: ["github.com", "google.com"],
+  urls: ["https://github.com", "https://google.com"],
 };
 const seed_jobData = async () => {
   try {
