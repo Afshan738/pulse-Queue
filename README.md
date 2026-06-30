@@ -20,7 +20,7 @@ PulseQueue addresses all three with request-level idempotency, database-level lo
  
 ### Why PostgreSQL advisory locks over row-level locks
  
-Row-level locks (`SELECT ... FOR UPDATE`) tie up a database transaction for the duration of the work, which is dangerous when "the work" includes network calls that can take seconds. Advisory locks are application-level and non-blocking — `pg_try_advisory_lock(job.id)` returns instantly with `true` or `false`, letting a worker move on to the next job immediately if another worker already owns the current one. No worker ever blocks waiting on another.
+Row-level locks (`SELECT ... FOR UPDATE`) tie up a database transaction for the duration of the work, which is dangerous when "the work" includes network calls that can take seconds. Advisory locks are application-level and non-blocking  `pg_try_advisory_lock(job.id)` returns instantly with `true` or `false`, letting a worker move on to the next job immediately if another worker already owns the current one. No worker ever blocks waiting on another.
  
 ### Why cursor-based pagination over offset pagination
  
