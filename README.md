@@ -1,6 +1,6 @@
 # PulseQueue
  
-A production-grade idempotent job queue built with Node.js, Express, PostgreSQL, and Redis. PulseQueue solves a real problem: when distributed workers process jobs concurrently, how do you guarantee a job runs exactly once — no duplicate emails, no double-charged payments, no lost work when a worker crashes mid-task.
+A production-grade idempotent job queue built with Node.js, Express, PostgreSQL, and Redis. PulseQueue solves a real problem: when distributed workers process jobs concurrently, how do you guarantee a job runs exactly once — no duplicate emails, no double charged payments, no lost work when a worker crashes mid-task.
  
 ## The Problem
  
