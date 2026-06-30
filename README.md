@@ -24,11 +24,11 @@ Row-level locks (`SELECT ... FOR UPDATE`) tie up a database transaction for the 
  
 ### Why cursor-based pagination over offset pagination
  
-`OFFSET` pagination degrades linearly with page depth — fetching page 1000 means scanning and discarding the first 9990 rows. It's also unstable: if a row is inserted while a user is paginating, results shift and duplicate or skip entries. Cursor pagination anchors to a specific row position `(created_at, id)`, so performance stays constant regardless of page depth, and new inserts never disturb an in-progress pagination sequence.
+`OFFSET` pagination degrades linearly with page depth,  fetching page 1000 means scanning and discarding the first 9990 rows. It's also unstable: if a row is inserted while a user is paginating, results shift and duplicate or skip entries. Cursor pagination anchors to a specific row position `(created_at, id)`, so performance stays constant regardless of page depth, and new inserts never disturb an in-progress pagination sequence.
  
 ### Why a composite `(created_at, id)` cursor instead of `created_at` alone
  
-`created_at` is not guaranteed unique — two jobs can be created in the same millisecond under load. Using `id` as a tiebreaker guarantees a strictly total order, making the cursor deterministic with zero risk of skipped or duplicated rows at timestamp collisions.
+`created_at` is not guaranteed unique, two jobs can be created in the same millisecond under load. Using `id` as a tiebreaker guarantees a strictly total order, making the cursor deterministic with zero risk of skipped or duplicated rows at timestamp collisions.
  
 ### Why worker threads for URL health checks
  
@@ -36,11 +36,11 @@ The scheduler may process jobs containing many URLs. Sequential `await fetch()` 
  
 ### Why `updated_at` (not `completed_at`) detects stuck jobs
  
-`completed_at` is `NULL` until a job finishes, so it can't measure how long a job has been *in progress*. A PostgreSQL trigger stamps `updated_at = NOW()` on every row update, including the transition to `processing`. If a worker crashes after that point, `updated_at` simply stops advancing — the scheduler detects any job in `processing` with a stale `updated_at` and resets it to `pending` automatically, with zero manual intervention.
+`completed_at` is `NULL` until a job finishes, so it can't measure how long a job has been *in progress*. A PostgreSQL trigger stamps `updated_at = NOW()` on every row update, including the transition to `processing`. If a worker crashes after that point, `updated_at` simply stops advancing, the scheduler detects any job in `processing` with a stale `updated_at` and resets it to `pending` automatically, with zero manual intervention.
  
 ### Why idempotency uses SHA-256 fingerprinting + Redis, not a database unique constraint
  
-A database constraint can only dedupe on values already stored in a row. Idempotency needs to dedupe on the *entire incoming request* before it touches the database at all — including requests that would otherwise create different rows. SHA-256 fingerprinting the request body, combined with a 24-hour Redis TTL cache of the response, lets PulseQueue return the exact original response to a retried request without ever re-executing the side effect.
+A database constraint can only dedupe on values already stored in a row. Idempotency needs to dedupe on the *entire incoming request* before it touches the database at all, including requests that would otherwise create different rows. SHA-256 fingerprinting the request body, combined with a 24-hour Redis TTL cache of the response, lets PulseQueue return the exact original response to a retried request without ever re-executing the side effect.
  
 ## Performance: Query Optimization
  
@@ -75,7 +75,7 @@ Limit  (actual time=1.362..1.372 rows=10 loops=1)
 Execution Time: 6.045 ms
 ```
  
-This version compiles to an **Index Cond** rather than a **Filter** — PostgreSQL uses the composite index to jump directly to the correct starting position in the B-tree rather than scanning and filtering. Result: **22.029ms → 6.045ms, a 3.6x improvement**, with the gap widening further as the table grows.
+This version compiles to an **Index Cond** rather than a **Filter** , PostgreSQL uses the composite index to jump directly to the correct starting position in the B-tree rather than scanning and filtering. Result: **22.029ms → 6.045ms, a 3.6x improvement**, with the gap widening further as the table grows.
  
 ### Indexes
  
@@ -87,12 +87,12 @@ CREATE INDEX idx_jobs_status_pending ON jobs (status) WHERE status = 'pending';
 CREATE INDEX idx_jobs_created_at_id ON jobs (created_at DESC, id DESC);
 ```
  
-The partial index on `status` avoids indexing `completed` and `failed` jobs entirely — the scheduler never queries for those, so there's no reason to pay the storage and write-amplification cost of indexing them.
+The partial index on `status` avoids indexing `completed` and `failed` jobs entirely,  the scheduler never queries for those, so there's no reason to pay the storage and write-amplification cost of indexing them.
  
 ## API Reference
  
 ### `POST /api/users/register`
-Creates a user and returns an API key. No authentication required — this is the only public endpoint.
+Creates a user and returns an API key. No authentication required,this is the only public endpoint.
  
 ```bash
 curl -X POST http://localhost:8000/api/users/register \
@@ -101,7 +101,7 @@ curl -X POST http://localhost:8000/api/users/register \
 ```
  
 ### `POST /api/jobs`
-Creates a job. Requires `x-api-key` header. Idempotent — identical requests within 24 hours return the cached original response.
+Creates a job. Requires `x-api-key` header. Idempotent, identical requests within 24 hours return the cached original response.
  
 ### `GET /api/jobs`
 Cursor-paginated job listing.
