@@ -16,20 +16,22 @@ const seed_user = async () => {
     console.error("Error occurred while seeding the database:", err);
   }
 };
-seed_user();
 const jobdata = {
   urls: ["https://github.com", "https://google.com"],
 };
 const seed_jobData = async () => {
   try {
-    const results = await pool.query(
-      "INSERT INTO jobs(user_id,payload ) VALUES($1,$2)",
-      [1, jobdata],
-    );
+    for (let i = 0; i < 7000; i++) {
+      const results = await pool.query(
+        "INSERT INTO jobs(user_id,payload,status ) VALUES($1,$2,$3)",
+        [1, jobdata, "completed"],
+      );
+    }
     console.log("Job data seeded successfully");
   } catch (err) {
     console.error("Error occurred while seeding the database:", err);
   }
 };
-seed_jobData();
+await seed_user();
+await seed_jobData();
 await pool.end();

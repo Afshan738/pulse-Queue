@@ -16,6 +16,9 @@ CREATE TABLE jobs (
     updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE INDEX idx_jobs_status_pending ON jobs (status) WHERE status = 'pending';
+CREATE INDEX idx_jobs_created_at_id ON jobs (created_at DESC, id DESC);
+
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN

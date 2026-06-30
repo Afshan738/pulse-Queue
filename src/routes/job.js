@@ -22,7 +22,7 @@ router.get("/", async (req, res, next) => {
     let result;
     if (decoded) {
       result = await pool.query(
-        `SELECT * FROM jobs WHERE created_at < $1 OR (created_at=$1 AND id<$2) ORDER BY created_at DESC, id DESC LIMIT $3`,
+        `SELECT * FROM jobs WHERE (created_at, id) < ($1, $2) ORDER BY created_at DESC, id DESC LIMIT $3`,
         [cursorDate, decoded?.id, limit + 1],
       );
     } else {
