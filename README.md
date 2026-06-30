@@ -6,9 +6,9 @@ A production-grade idempotent job queue built with Node.js, Express, PostgreSQL,
  
 Distributed job processing systems commonly fail in three ways:
  
-1. **Duplicate requests** — a client retries a request (network timeout, double-click) and the same job gets created and processed twice
-2. **Duplicate processing** — multiple workers pick up the same pending job simultaneously and both process it
-3. **Lost jobs on crash** — a worker dies mid-processing and the job is stuck forever, never retried
+1. **Duplicate requests**: a client retries a request (network timeout, double-click) and the same job gets created and processed twice
+2. **Duplicate processing** : multiple workers pick up the same pending job simultaneously and both process it
+3. **Lost jobs on crash**: a worker dies mid-processing and the job is stuck forever, never retried
 PulseQueue addresses all three with request-level idempotency, database-level locking, and automatic stuck-job recovery.
  
 ## Architecture
@@ -158,4 +158,5 @@ node src/index.js           # starts the server on :8000
 - CPU-isolation via Node.js worker threads, keeping the main event loop responsive under load
 - Production observability via a `/health` endpoint exposing event loop lag, queue depth, connection pool state, and memory usage
 - Query optimization backed by `EXPLAIN ANALYZE`, not guesswork
- 
+
+ *The idempotency and locking patterns here apply directly to any system where duplicate processing has real cost, a payment charged twice, an investor emailed twice, a webhook delivered twice. PulseQueue is the backend pattern, not the product.*
