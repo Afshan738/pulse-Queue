@@ -47,5 +47,4 @@ const idempotencyMiddleware = async (req, res, next) => {
     next(error);
   }
 };
-
-module.exports = idempotencyMiddleware;
+module.exports=idempotencyMiddleware;
